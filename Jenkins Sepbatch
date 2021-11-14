@@ -1,0 +1,32 @@
+node {
+    
+def mavenHome = tool name: "Maven 3.8.3"
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])    
+    
+stage('CheckOutCode'){
+git branch: 'development', credentialsId: 'a8a4648d-7a6c-46d1-8b9b-fd65384be7f7', url: 'https://github.com/VeenaDadive/maven-web-application.git'
+}
+
+stage("Build"){
+sh "${mavenHome}/bin/mvn clean package"
+}
+/*
+  stage('ExecuteSonarQubeReport'){
+	sh "${mavenHome}/bin/mvn clean sonar:sonar"
+	}
+stage('UploadArtifactsIntoNexusRepo'){
+sh"${mavenHome}/bin/mvn deploy"
+}
+stage('DeployAppintoTomcatServer'){
+sshagent(['bd6c8b78-abb1-4d49-b92c-ccc8813adec3']) {
+sh"scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.232.166.253:/opt/tomcat9/webapps/"
+}
+}
+stage('SendEmailNotification'){
+mail bcc: '', body: '''Build over..
+Regards,
+veena''', cc: 'reachveena.dadive@gmail.com', from: '', replyTo: '', subject: 'Build over!..', to: 'dadive.veena@gmail.com'
+}
+*/
+    
+}
